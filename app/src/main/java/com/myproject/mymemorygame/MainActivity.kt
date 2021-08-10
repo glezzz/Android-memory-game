@@ -2,6 +2,7 @@ package com.myproject.mymemorygame
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import com.myproject.mymemorygame.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -14,8 +15,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        rvBoard.adapter = MemoryBoardAdapter(this, 8)
+
+        // Performance optimization
+        rvBoard.setHasFixedSize(true)
+        rvBoard.layoutManager = GridLayoutManager(this, 2)
 
     }
 }

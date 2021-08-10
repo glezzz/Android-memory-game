@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.myproject.mymemorygame.databinding.MemoryCardBinding
+import com.myproject.mymemorygame.models.BoardSize
 import kotlin.math.min
 
-class MemoryBoardAdapter(private val context: Context, private val numPieces: Int) :
+class MemoryBoardAdapter(private val context: Context, private val boardSize: BoardSize) :
     RecyclerView.Adapter<MemoryBoardAdapter.MemoryBoardViewHolder>() {
     // ViewHolder: Object which provides access to all the views of one rv element. In this case 1 memory card.
 
@@ -27,11 +28,11 @@ class MemoryBoardAdapter(private val context: Context, private val numPieces: In
             false
         )
 
-        // parent: ViewGroup = rv
+        // parent: ViewGroup = rv, that's how we can get the width & height
         // parent.width / however many columns we have in the grid
         // Reduce it by the amount of margin on either side
-        val cardWith = parent.width / 2 - (2 * MARGIN_SIZE)
-        val cardHeight = parent.height / 4 - (2 * MARGIN_SIZE)
+        val cardWith = parent.width / boardSize.getWidth() - (2 * MARGIN_SIZE)
+        val cardHeight = parent.height / boardSize.getHeight() - (2 * MARGIN_SIZE)
 
         // Mandate that every card is square
         val cardSideLength = min(cardWith, cardHeight)
@@ -50,7 +51,7 @@ class MemoryBoardAdapter(private val context: Context, private val numPieces: In
     /**
      * How many elements are in rv
      */
-    override fun getItemCount() = numPieces
+    override fun getItemCount() = boardSize.numCards
 
     /**
      * Responsible for taking the data at position at binding it to ViewHolder

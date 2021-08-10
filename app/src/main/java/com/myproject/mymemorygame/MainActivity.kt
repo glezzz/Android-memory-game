@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.myproject.mymemorygame.databinding.ActivityMainBinding
+import com.myproject.mymemorygame.models.BoardSize
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,16 +14,19 @@ class MainActivity : AppCompatActivity() {
     private val tvNumMoves by lazy { binding.tvNumMoves }
     private val tvNumPairs by lazy { binding.tvNumPairs }
 
+    // Initially boardSize will be EASY
+    private var boardSize: BoardSize = BoardSize.HARD
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        rvBoard.adapter = MemoryBoardAdapter(this, 8)
+        rvBoard.adapter = MemoryBoardAdapter(this, boardSize)
 
         // Performance optimization
         rvBoard.setHasFixedSize(true)
-        rvBoard.layoutManager = GridLayoutManager(this, 2)
+        rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
 
     }
 }

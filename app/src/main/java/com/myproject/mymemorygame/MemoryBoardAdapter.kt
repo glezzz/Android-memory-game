@@ -1,6 +1,7 @@
 package com.myproject.mymemorygame
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ class MemoryBoardAdapter(private val context: Context, private val numPieces: In
 
     companion object {
         private const val MARGIN_SIZE = 10
+        private const val TAG = "MemoryBoardAdapter"
     }
 
     /**
@@ -57,10 +59,13 @@ class MemoryBoardAdapter(private val context: Context, private val numPieces: In
         holder.bind(position)
     }
 
-    inner class MemoryBoardViewHolder(val binding: MemoryCardBinding) :
+    inner class MemoryBoardViewHolder(private val binding: MemoryCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(position: Int) {
-            // No-op
+            binding.ibImageCard.setOnClickListener {
+                Log.i(TAG, "Clicked on position $position")
+            }
         }
     }
 }

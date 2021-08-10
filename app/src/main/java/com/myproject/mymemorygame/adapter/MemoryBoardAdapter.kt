@@ -1,4 +1,4 @@
-package com.myproject.mymemorygame
+package com.myproject.mymemorygame.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,7 +8,10 @@ import com.myproject.mymemorygame.databinding.MemoryCardBinding
 import com.myproject.mymemorygame.models.BoardSize
 import kotlin.math.min
 
-class MemoryBoardAdapter(private val boardSize: BoardSize) :
+class MemoryBoardAdapter(
+    private val boardSize: BoardSize,
+    private val cardImages: List<Int>
+) :
     RecyclerView.Adapter<MemoryBoardAdapter.MemoryBoardViewHolder>() {
     // ViewHolder: Object which provides access to all the views of one rv element. In this case 1 memory card.
 
@@ -59,11 +62,13 @@ class MemoryBoardAdapter(private val boardSize: BoardSize) :
         holder.bind(position)
     }
 
-    inner class MemoryBoardViewHolder(private val binding: MemoryCardBinding) :
+    inner class MemoryBoardViewHolder(binding: MemoryCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        private val imageButton = binding.ibImageCard
 
         fun bind(position: Int) {
-            binding.ibImageCard.setOnClickListener {
+            imageButton.setImageResource(cardImages[position])
+            imageButton.setOnClickListener {
                 Log.i(TAG, "Clicked on position $position")
             }
         }

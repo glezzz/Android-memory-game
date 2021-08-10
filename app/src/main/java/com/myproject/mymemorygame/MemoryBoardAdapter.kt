@@ -1,6 +1,5 @@
 package com.myproject.mymemorygame
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,7 +8,7 @@ import com.myproject.mymemorygame.databinding.MemoryCardBinding
 import com.myproject.mymemorygame.models.BoardSize
 import kotlin.math.min
 
-class MemoryBoardAdapter(private val context: Context, private val boardSize: BoardSize) :
+class MemoryBoardAdapter(private val boardSize: BoardSize) :
     RecyclerView.Adapter<MemoryBoardAdapter.MemoryBoardViewHolder>() {
     // ViewHolder: Object which provides access to all the views of one rv element. In this case 1 memory card.
 

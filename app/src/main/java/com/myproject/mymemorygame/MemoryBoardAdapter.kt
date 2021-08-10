@@ -2,22 +2,47 @@ package com.myproject.mymemorygame
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.myproject.mymemorygame.databinding.MemoryCardBinding
+import kotlin.math.min
 
 class MemoryBoardAdapter(private val context: Context, private val numPieces: Int) :
-    RecyclerView.Adapter<MemoryBoardAdapter.ViewHolder>() {
+    RecyclerView.Adapter<MemoryBoardAdapter.MemoryBoardViewHolder>() {
     // ViewHolder: Object which provides access to all the views of one rv element. In this case 1 memory card.
+
+    companion object {
+        private const val MARGIN_SIZE = 10
+    }
 
     /**
      * Responsible for figuring out how to create one view of rv
      */
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // This is the view that is created
-        val view = LayoutInflater.from(context).inflate(R.layout.memory_card, parent, false)
-        // return the view wrapped inside of a viewHolder
-        return ViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoryBoardViewHolder {
+        val binding = MemoryCardBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+
+        // parent: ViewGroup = rv
+        // parent.width / however many columns we have in the grid
+        // Reduce it by the amount of margin on either side
+        val cardWith = parent.width / 2 - (2 * MARGIN_SIZE)
+        val cardHeight = parent.height / 4 - (2 * MARGIN_SIZE)
+
+        // Mandate that every card is square
+        val cardSideLength = min(cardWith, cardHeight)
+
+        // This allows to change width & height     cast it to be able to set margins
+        val layoutParams = binding.cvCard.layoutParams as ViewGroup.MarginLayoutParams
+        layoutParams.width = cardSideLength
+        layoutParams.height = cardSideLength
+
+        // Set margin size all around card
+        layoutParams.setMargins(MARGIN_SIZE, MARGIN_SIZE, MARGIN_SIZE, MARGIN_SIZE)
+
+        return MemoryBoardViewHolder(binding)
     }
 
     /**
@@ -28,11 +53,12 @@ class MemoryBoardAdapter(private val context: Context, private val numPieces: In
     /**
      * Responsible for taking the data at position at binding it to ViewHolder
      */
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MemoryBoardViewHolder, position: Int) {
         holder.bind(position)
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class MemoryBoardViewHolder(val binding: MemoryCardBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int) {
             // No-op
         }

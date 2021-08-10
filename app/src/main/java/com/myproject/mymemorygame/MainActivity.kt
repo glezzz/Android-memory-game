@@ -1,14 +1,19 @@
 package com.myproject.mymemorygame
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.myproject.mymemorygame.adapter.MemoryBoardAdapter
 import com.myproject.mymemorygame.databinding.ActivityMainBinding
 import com.myproject.mymemorygame.models.BoardSize
-import com.myproject.mymemorygame.utils.DEFAULT_ICONS
+import com.myproject.mymemorygame.models.MemoryGame
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "MainActivity"
+    }
 
     private lateinit var binding: ActivityMainBinding
 
@@ -24,17 +29,27 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Get 4 distinct images
-        val chosenImages = DEFAULT_ICONS.shuffled().take(boardSize.getNumPairs())
+        // Construct game
+        val memoryGame = MemoryGame(boardSize)
 
-        // Double up those images & randomize it
-        val randomizedImages = (chosenImages + chosenImages).shuffled()
+        // Set up adapter
+        rvBoard.adapter = MemoryBoardAdapter(boardSize, memoryGame.cards, object: MemoryBoardAdapter.CardClickListener {
+            override fun onCardClicked(position: Int) {
+                Log.i(TAG, "Card clicked at $position")
+            }
 
+        })
+
+        // Performance optimization
+        rvBoard.setHasFixedSize(true)
+        rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
+    }
+
+    /*private fun setUpRecyclerView(randomizedImages: List<Int>) {
         rvBoard.adapter = MemoryBoardAdapter(boardSize, randomizedImages)
 
         // Performance optimization
         rvBoard.setHasFixedSize(true)
         rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
-
-    }
+    }*/
 }

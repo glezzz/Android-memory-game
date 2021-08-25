@@ -67,4 +67,18 @@ class MemoryGame(private val boardSize: BoardSize) {
             }
         }
     }
+
+    /**
+     * Player has won the game
+     */
+    fun haveWonGame(): Boolean {
+        return numPairsFound == boardSize.getNumPairs()
+    }
+
+    /**
+     * Card is already face up, thus cannot be clicked again
+     */
+    fun isCardFaceUp(position: Int): Boolean {
+        return cards[position].isFaceUp
+    }
 }

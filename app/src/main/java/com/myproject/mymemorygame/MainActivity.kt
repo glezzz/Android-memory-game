@@ -1,8 +1,10 @@
 package com.myproject.mymemorygame
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.myproject.mymemorygame.adapter.MemoryBoardAdapter
 import com.myproject.mymemorygame.databinding.ActivityMainBinding
 import com.myproject.mymemorygame.models.BoardSize
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var adapter: MemoryBoardAdapter
     private lateinit var memoryGame: MemoryGame
+
     // Initially boardSize will be EASY
     private var boardSize: BoardSize = BoardSize.EASY
 
@@ -34,12 +37,16 @@ class MainActivity : AppCompatActivity() {
         memoryGame = MemoryGame(boardSize)
 
         // Set up adapter
-        adapter = MemoryBoardAdapter(this, boardSize, memoryGame.cards, object: MemoryBoardAdapter.CardClickListener {
-            override fun onCardClicked(position: Int) {
-                updateGameWithFlip(position)
-            }
+        adapter = MemoryBoardAdapter(
+            this,
+            boardSize,
+            memoryGame.cards,
+            object : MemoryBoardAdapter.CardClickListener {
+                override fun onCardClicked(position: Int) {
+                    updateGameWithFlip(position)
+                }
 
-        })
+            })
 
         // Performance optimization
         rvBoard.adapter = adapter
@@ -47,16 +54,26 @@ class MainActivity : AppCompatActivity() {
         rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
     }
 
+    /**
+     * Player attempts to flip card at position in recyclerView
+     */
     private fun updateGameWithFlip(position: Int) {
-        memoryGame.flipCard(position)
+        // Error checking
+        if (memoryGame.haveWonGame()) {
+            // Alert user of invalid move
+            Snackbar.make(binding.clRoot, "You already won!", Snackbar.LENGTH_LONG).show()
+            return
+        }
+        if (memoryGame.isCardFaceUp(position)) {
+            // Alert user of invalid move
+            Snackbar.make(binding.clRoot, "Invalid move!", Snackbar.LENGTH_LONG).show()
+            return
+        }
+
+        // Actually flipping over the card
+        if (memoryGame.flipCard(position)) {
+            Log.i(TAG, "Found match! Num pairs found: ${memoryGame.numPairsFound}")
+        }
         adapter.notifyDataSetChanged()
     }
-
-    /*private fun setUpRecyclerView(randomizedImages: List<Int>) {
-        rvBoard.adapter = MemoryBoardAdapter(boardSize, randomizedImages)
-
-        // Performance optimization
-        rvBoard.setHasFixedSize(true)
-        rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
-    }*/
 }

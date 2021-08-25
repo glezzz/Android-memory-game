@@ -3,9 +3,11 @@ package com.myproject.mymemorygame.activities
 import android.animation.ArgbEvaluator
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.RadioGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -57,11 +59,41 @@ class MainActivity : AppCompatActivity() {
                     // Reset game
                     setupBoard()
                 }
+                return true
+            }
+            R.id.miNewSize -> {
+                showNewSizeDialog()
+                return true
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
+    private fun showNewSizeDialog() {
+        val boardSizeView = LayoutInflater.from(this).inflate(R.layout.dialog_board_size, null)
+        val radioGroupSize = boardSizeView.findViewById<RadioGroup>(R.id.rgSelectSize)
+
+        // Preselect current board size is in Alert Dialog
+        when (boardSize) {
+            BoardSize.EASY -> radioGroupSize.check(R.id.rbEasy)
+            BoardSize.MEDIUM -> radioGroupSize.check(R.id.rbMedium)
+            BoardSize.HARD -> radioGroupSize.check(R.id.rbHard)
+        }
+
+        showAlertDialog("Choose new size", boardSizeView, View.OnClickListener {
+            // Set a new value for the board size
+            boardSize = when (radioGroupSize.checkedRadioButtonId) {
+                R.id.rbEasy -> BoardSize.EASY
+                R.id.rbMedium -> BoardSize.MEDIUM
+                else -> BoardSize.HARD
+            }
+            setupBoard()
+        })
+    }
+
+    /**
+     * Displays an alert dialog when resetting game
+     */
     private fun showAlertDialog(
         title: String,
         view: View?,
@@ -78,11 +110,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupBoard() {
-        when(boardSize) {
-            BoardSize.EASY ->
-
-            BoardSize.MEDIUM -> TODO()
-            BoardSize.HARD -> TODO()
+        when (boardSize) {
+            BoardSize.EASY -> {
+                binding.tvNumMoves.text = "Easy: 4 x 2"
+                binding.tvNumPairs.text = "Pairs: 0 / 4"
+            }
+            BoardSize.MEDIUM -> {
+                binding.tvNumMoves.text = "Easy: 6 x 3"
+                binding.tvNumPairs.text = "Pairs: 0 / 9"
+            }
+            BoardSize.HARD -> {
+                binding.tvNumMoves.text = "Easy: 6 x 4"
+                binding.tvNumPairs.text = "Pairs: 0 / 12"
+            }
         }
         // Set initial color to no progress
         binding.tvNumPairs.setTextColor(ContextCompat.getColor(this, R.color.color_progress_none))

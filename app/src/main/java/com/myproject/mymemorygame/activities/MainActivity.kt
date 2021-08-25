@@ -1,6 +1,7 @@
 package com.myproject.mymemorygame.activities
 
 import android.animation.ArgbEvaluator
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,11 +19,13 @@ import com.myproject.mymemorygame.adapter.MemoryBoardAdapter
 import com.myproject.mymemorygame.databinding.ActivityMainBinding
 import com.myproject.mymemorygame.models.BoardSize
 import com.myproject.mymemorygame.models.MemoryGame
+import com.myproject.mymemorygame.utils.EXTRA_BOARD_SIZE
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "MainActivity"
+        const val CREATE_REQUEST_CODE = 248
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -65,10 +68,34 @@ class MainActivity : AppCompatActivity() {
                 showNewSizeDialog()
                 return true
             }
+            R.id.miCustomGame -> {
+                showCreationDialog()
+            }
         }
         return super.onOptionsItemSelected(item)
     }
 
+    private fun showCreationDialog() {
+        val boardSizeView = LayoutInflater.from(this).inflate(R.layout.dialog_board_size, null)
+        val radioGroupSize = boardSizeView.findViewById<RadioGroup>(R.id.rgSelectSize)
+
+        showAlertDialog("Choose your own memory board", boardSizeView, View.OnClickListener {
+            // Set a new value for the board size
+            val desiredBoardSize = when (radioGroupSize.checkedRadioButtonId) {
+                R.id.rbEasy -> BoardSize.EASY
+                R.id.rbMedium -> BoardSize.MEDIUM
+                else -> BoardSize.HARD
+            }
+            // Navigate to new activity
+            val intent = Intent(this, CreateActivity::class.java)
+            intent.putExtra(EXTRA_BOARD_SIZE, desiredBoardSize)
+            startActivityForResult(intent, CREATE_REQUEST_CODE)
+        })
+    }
+
+    /**
+     * Displays an alert dialog to choose the size of the board
+     */
     private fun showNewSizeDialog() {
         val boardSizeView = LayoutInflater.from(this).inflate(R.layout.dialog_board_size, null)
         val radioGroupSize = boardSizeView.findViewById<RadioGroup>(R.id.rgSelectSize)

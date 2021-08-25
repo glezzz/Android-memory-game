@@ -1,8 +1,11 @@
 package com.myproject.mymemorygame.adapter
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.myproject.mymemorygame.R
 import com.myproject.mymemorygame.databinding.MemoryCardBinding
@@ -11,6 +14,7 @@ import com.myproject.mymemorygame.models.MemoryCard
 import kotlin.math.min
 
 class MemoryBoardAdapter(
+    private val context: Context,
     private val boardSize: BoardSize,
     private val cards: List<MemoryCard>,
     private val cardClickListener: CardClickListener
@@ -78,6 +82,13 @@ class MemoryBoardAdapter(
 
             // If card isFaceUp then we use that as an image, otherwise we use the bg
             imageButton.setImageResource(if (memoryCard.isFaceUp) memoryCard.identifier else R.drawable.ic_launcher_background)
+
+            // Change opacity of matched cards
+            imageButton.alpha = if (memoryCard.isMatched) .4f else 1.0f
+            // Change background of matched cards
+            val colorStateList = if (memoryCard.isMatched) ContextCompat.getColorStateList(context, R.color.color_gray) else null
+            ViewCompat.setBackgroundTintList(imageButton, colorStateList)
+
             imageButton.setOnClickListener {
                 Log.i(TAG, "Clicked on position $position")
                 cardClickListener.onCardClicked(position)

@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         memoryGame = MemoryGame(boardSize)
 
         // Set up adapter
-        adapter = MemoryBoardAdapter(boardSize, memoryGame.cards, object: MemoryBoardAdapter.CardClickListener {
+        adapter = MemoryBoardAdapter(this, boardSize, memoryGame.cards, object: MemoryBoardAdapter.CardClickListener {
             override fun onCardClicked(position: Int) {
                 updateGameWithFlip(position)
             }

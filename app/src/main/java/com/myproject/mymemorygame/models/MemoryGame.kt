@@ -6,6 +6,7 @@ class MemoryGame(private val boardSize: BoardSize) {
     val cards: List<MemoryCard>
     var numPairsFound = 0
 
+    private var numCardFlips = 0
     private var indexOfSingleSelectedCard: Int? = null
 
     init {
@@ -21,6 +22,7 @@ class MemoryGame(private val boardSize: BoardSize) {
      * Handles what happens in the state of the game when the card at position is flipped
      */
     fun flipCard(position: Int): Boolean {
+        numCardFlips++
         val card = cards[position]
 
         // 3 cases:
@@ -80,5 +82,14 @@ class MemoryGame(private val boardSize: BoardSize) {
      */
     fun isCardFaceUp(position: Int): Boolean {
         return cards[position].isFaceUp
+    }
+
+    /**
+     * Get number of moves player has made. Doing integer truncation here.
+     * 1 move == 2 card flips
+     * e.g. If numCardFlips is 5, divided by 2, result will be 2
+     */
+    fun getNumMoves(): Int {
+        return numCardFlips / 2
     }
 }

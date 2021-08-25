@@ -1,7 +1,6 @@
 package com.myproject.mymemorygame
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.myproject.mymemorygame.adapter.MemoryBoardAdapter
@@ -16,13 +15,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityMainBinding
-
     private val rvBoard by lazy { binding.rvBoard }
     private val tvNumMoves by lazy { binding.tvNumMoves }
+
     private val tvNumPairs by lazy { binding.tvNumPairs }
 
+    private lateinit var adapter: MemoryBoardAdapter
+    private lateinit var memoryGame: MemoryGame
     // Initially boardSize will be EASY
-    private var boardSize: BoardSize = BoardSize.HARD
+    private var boardSize: BoardSize = BoardSize.EASY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,19 +31,25 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Construct game
-        val memoryGame = MemoryGame(boardSize)
+        memoryGame = MemoryGame(boardSize)
 
         // Set up adapter
-        rvBoard.adapter = MemoryBoardAdapter(boardSize, memoryGame.cards, object: MemoryBoardAdapter.CardClickListener {
+        adapter = MemoryBoardAdapter(boardSize, memoryGame.cards, object: MemoryBoardAdapter.CardClickListener {
             override fun onCardClicked(position: Int) {
-                Log.i(TAG, "Card clicked at $position")
+                updateGameWithFlip(position)
             }
 
         })
 
         // Performance optimization
+        rvBoard.adapter = adapter
         rvBoard.setHasFixedSize(true)
         rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
+    }
+
+    private fun updateGameWithFlip(position: Int) {
+        memoryGame.flipCard(position)
+        adapter.notifyDataSetChanged()
     }
 
     /*private fun setUpRecyclerView(randomizedImages: List<Int>) {

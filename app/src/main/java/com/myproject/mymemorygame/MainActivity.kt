@@ -1,8 +1,10 @@
 package com.myproject.mymemorygame
 
+import android.animation.ArgbEvaluator
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.myproject.mymemorygame.adapter.MemoryBoardAdapter
@@ -33,6 +35,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Set initial color to no progress
+        binding.tvNumPairs.setTextColor(ContextCompat.getColor(this, R.color.color_progress_none))
         // Construct game
         memoryGame = MemoryGame(boardSize)
 
@@ -72,6 +76,14 @@ class MainActivity : AppCompatActivity() {
         // Actually flipping over the card
         if (memoryGame.flipCard(position)) {
             Log.i(TAG, "Found match! Num pairs found: ${memoryGame.numPairsFound}")
+
+            // Using color interpolation here
+            val color = ArgbEvaluator().evaluate(
+                memoryGame.numPairsFound.toFloat() / boardSize.getNumPairs(),
+                ContextCompat.getColor(this, R.color.color_progress_none),
+                ContextCompat.getColor(this, R.color.color_progress_full)
+            ) as Int
+            binding.tvNumPairs.setTextColor(color)
 
             binding.tvNumPairs.text =
                 "Pairs: ${memoryGame.numPairsFound} / ${boardSize.getNumPairs()}"

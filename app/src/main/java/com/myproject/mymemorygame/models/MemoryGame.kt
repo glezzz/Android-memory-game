@@ -43,6 +43,7 @@ class MemoryGame(private val boardSize: BoardSize) {
 
         // Opposite of what it was
         card.isFaceUp = !card.isFaceUp
+
         return foundMatch
     }
 
@@ -56,6 +57,7 @@ class MemoryGame(private val boardSize: BoardSize) {
         cards[position1].isMatched = true
         cards[position2].isMatched = true
         numPairsFound++
+
         return true
     }
 

@@ -1,12 +1,17 @@
-package com.myproject.mymemorygame
+package com.myproject.mymemorygame.activities
 
 import android.animation.ArgbEvaluator
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.myproject.mymemorygame.R
 import com.myproject.mymemorygame.adapter.MemoryBoardAdapter
 import com.myproject.mymemorygame.databinding.ActivityMainBinding
 import com.myproject.mymemorygame.models.BoardSize
@@ -19,10 +24,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityMainBinding
-    private val rvBoard by lazy { binding.rvBoard }
-    private val tvNumMoves by lazy { binding.tvNumMoves }
-
-    private val tvNumPairs by lazy { binding.tvNumPairs }
 
     private lateinit var adapter: MemoryBoardAdapter
     private lateinit var memoryGame: MemoryGame
@@ -35,6 +36,54 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupBoard()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.miRefresh -> {
+                //Show alert message when trying to reset a game in progress
+                if (memoryGame.getNumMoves() > 0 && !memoryGame.haveWonGame()) {
+                    showAlertDialog("Quit your current game?", null, View.OnClickListener {
+                        setupBoard()
+                    })
+
+                } else {
+                    // Reset game
+                    setupBoard()
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showAlertDialog(
+        title: String,
+        view: View?,
+        positiveClickListener: View.OnClickListener
+    ) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setView(view)
+            // Null means dismiss this alert dialog if player presses cancel
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("OK") { _, _ ->
+                positiveClickListener.onClick(null)
+            }.show()
+    }
+
+    private fun setupBoard() {
+        when(boardSize) {
+            BoardSize.EASY ->
+
+            BoardSize.MEDIUM -> TODO()
+            BoardSize.HARD -> TODO()
+        }
         // Set initial color to no progress
         binding.tvNumPairs.setTextColor(ContextCompat.getColor(this, R.color.color_progress_none))
         // Construct game
@@ -53,9 +102,9 @@ class MainActivity : AppCompatActivity() {
             })
 
         // Performance optimization
-        rvBoard.adapter = adapter
-        rvBoard.setHasFixedSize(true)
-        rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
+        binding.rvBoard.adapter = adapter
+        binding.rvBoard.setHasFixedSize(true)
+        binding.rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
     }
 
     /**

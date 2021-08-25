@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.myproject.mymemorygame.R
-import com.myproject.mymemorygame.adapter.MemoryBoardAdapter
+import com.myproject.mymemorygame.adapters.MemoryBoardAdapter
 import com.myproject.mymemorygame.databinding.ActivityMainBinding
 import com.myproject.mymemorygame.models.BoardSize
 import com.myproject.mymemorygame.models.MemoryGame

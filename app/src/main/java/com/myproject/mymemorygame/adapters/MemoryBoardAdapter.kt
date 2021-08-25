@@ -1,4 +1,4 @@
-package com.myproject.mymemorygame.adapter
+package com.myproject.mymemorygame.adapters
 
 import android.content.Context
 import android.util.Log

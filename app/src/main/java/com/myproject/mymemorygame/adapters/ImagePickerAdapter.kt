@@ -12,8 +12,13 @@ import kotlin.math.min
 class ImagePickerAdapter(
     private val context: Context,
     private val imageUris: List<Uri>,
-    private val boardSize: BoardSize
+    private val boardSize: BoardSize,
+    private val imageClickListener: ImageClickListener
 ) : RecyclerView.Adapter<ImagePickerAdapter.ImagePickerViewHolder>() {
+
+    interface ImageClickListener {
+        fun onPlaceHolderClicked()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImagePickerViewHolder {
         val binding = CardImageBinding.inflate(
@@ -52,11 +57,13 @@ class ImagePickerAdapter(
 
         fun bind(uri: Uri) {
             ivCustomImage.setImageURI(uri)
+            ivCustomImage.setOnClickListener(null)
         }
 
         fun bind() {
-            TODO("Not yet implemented")
+            ivCustomImage.setOnClickListener {
+                imageClickListener.onPlaceHolderClicked()
+            }
         }
-
     }
 }

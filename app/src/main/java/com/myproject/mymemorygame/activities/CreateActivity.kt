@@ -5,6 +5,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
@@ -24,6 +27,8 @@ class CreateActivity : AppCompatActivity() {
         private const val PICK_PHOTO_CODE = 655
         private const val READ_EXTERNAL_PHOTOS_CODE = 248
         private const val READ_PHOTOS_PERMISSION = android.Manifest.permission.READ_EXTERNAL_STORAGE
+        private const val MIN_GAME_LENGTH = 3
+        private const val MAX_GAME_LENGTH = 14
     }
 
     private lateinit var binding: ActivityCreateBinding
@@ -45,6 +50,20 @@ class CreateActivity : AppCompatActivity() {
         numImagesRequired = boardSize.getNumPairs()
         // Modify action bar title based on how many pictures user needs to select
         supportActionBar?.title = "Choose pics (0 / $numImagesRequired)"
+
+        // Max amount of characters
+        binding.etGameName.filters = arrayOf(InputFilter.LengthFilter(MAX_GAME_LENGTH))
+        binding.etGameName.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Any text modification potentially enables the save button
+                binding.btnSave.isEnabled = shouldEnableSaveButton()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {}
+
+        })
 
         adapter = ImagePickerAdapter(
             this,
@@ -121,7 +140,7 @@ class CreateActivity : AppCompatActivity() {
 
                 // If we get to this method onActivityResult(), that means that user has tapped on
                 // the grey placeholder imageView. That means there is space for at least one more image
-                // in chosenImagesUris. In the case of clipData user might hace picked an arbitraty number
+                // in chosenImagesUris. In the case of clipData user might have picked an arbitrary number
                 // of pics, but we only want the amount specified by numImagesRequired. e.g. User picks
                 // 20 pics, but we only want 8. That's why in every it of the for loop we check how many images
                 // are in chosenImagesUris. In the else case, no need to check, because there, it's
@@ -142,6 +161,20 @@ class CreateActivity : AppCompatActivity() {
         // Notify adapter and change the grey placeholder imageView with preview of selected pics
         adapter.notifyDataSetChanged()
         supportActionBar?.title = "Choose pics (${chosenImagesUris.size}/$numImagesRequired)"
+        binding.btnSave.isEnabled = shouldEnableSaveButton()
+    }
+
+    /**
+     * Enables the save button if user has picked correct amount of pics and has chosen a game name
+     */
+    private fun shouldEnableSaveButton(): Boolean {
+        if (chosenImagesUris.size != numImagesRequired) {
+            return false
+        }
+        if (binding.etGameName.text.isBlank() || binding.etGameName.text.length < MIN_GAME_LENGTH) {
+            return false
+        }
+        return true
     }
 
     /**
